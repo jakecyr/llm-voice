@@ -1,0 +1,22 @@
+2024-06-07 22:40:52,445 - DEBUG - AudioDevices.get_list_of_devices called
+2024-06-07 22:40:52,505 - DEBUG - Found 1 devices.
+2024-06-07 22:40:55,960 - DEBUG - AudioDevices.get_list_of_devices called
+2024-06-07 22:40:56,012 - DEBUG - Found 1 devices.
+2024-06-07 22:43:25,183 - DEBUG - AudioDevices.get_list_of_devices called
+2024-06-07 22:43:25,237 - DEBUG - Found 1 devices.
+2024-06-07 22:43:30,359 - DEBUG - ComputerVoiceResponder.speak - 'I'm just an AI, I don't have emotions or feelings like humans do.'
+2024-06-07 22:43:30,359 - DEBUG - ['say', "I'm just an AI, I don't have emotions or feelings like humans do.", '-o', '/var/folders/bb/kxz5tr054xz1988ss43gh7hh0000gn/T/tmpwak8zu06.mp3.aiff']
+2024-06-07 22:43:31,807 - DEBUG - Platform name: darwin
+2024-06-07 22:43:31,808 - DEBUG - Trying to play mp3 on Mac...
+2024-06-07 22:43:31,809 - DEBUG - ComputerVoiceResponder.speak - ' But I'm here to help you with any questions or topics you'd like to discuss!'
+2024-06-07 22:43:31,810 - DEBUG - ['say', " But I'm here to help you with any questions or topics you'd like to discuss!", '-o', '/var/folders/bb/kxz5tr054xz1988ss43gh7hh0000gn/T/tmpn0582lel.mp3.aiff']
+2024-06-07 22:43:33,109 - DEBUG - ComputerVoiceResponder.speak - ' How about we start fresh and see where the conversation takes us?'
+2024-06-07 22:43:33,109 - DEBUG - ['say', ' How about we start fresh and see where the conversation takes us?', '-o', '/var/folders/bb/kxz5tr054xz1988ss43gh7hh0000gn/T/tmp4tkau72v.mp3.aiff']
+2024-06-07 22:43:34,295 - DEBUG - ComputerVoiceResponder.speak - ' What's been going on in your life lately that you'd like to share?'
+2024-06-07 22:43:34,295 - DEBUG - ['say', " What's been going on in your life lately that you'd like to share?", '-o', '/var/folders/bb/kxz5tr054xz1988ss43gh7hh0000gn/T/tmp2wr6ra5d.mp3.aiff']
+2024-06-07 22:43:36,822 - DEBUG - Platform name: darwin
+2024-06-07 22:43:36,822 - DEBUG - Trying to play mp3 on Mac...
+2024-06-07 22:43:41,239 - DEBUG - Platform name: darwin
+2024-06-07 22:43:41,239 - DEBUG - Trying to play mp3 on Mac...
+2024-06-07 22:43:45,417 - DEBUG - Platform name: darwin
+2024-06-07 22:43:45,417 - DEBUG - Trying to play mp3 on Mac...

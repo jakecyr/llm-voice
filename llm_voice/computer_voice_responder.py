@@ -3,6 +3,9 @@
 from __future__ import annotations
 
 from pathlib import Path
+import queue
+import tempfile
+import threading
 from typing import TYPE_CHECKING
 
 from llm_voice.errors.respond_error import RespondError
@@ -65,3 +68,70 @@ class ComputerVoiceResponder(Responder):
             raise RespondError(f"Error playing computer voice response: {e}") from e
 
         mp3_file.remove()
+
+    def speak_fast(self, chat_stream) -> None:
+        self.lock = threading.Lock()
+
+        sentence: str = ""
+        generate_queue = queue.Queue[str]()
+        speak_queue = queue.Queue[str]()
+        generate_thread = threading.Thread(
+            target=self._generate_worker, args=(generate_queue, speak_queue)
+        )
+        speak_thread = threading.Thread(target=self._speak_worker, args=(speak_queue,))
+        generate_thread.start()
+        speak_thread.start()
+
+        for chat_message in chat_stream:
+            current_text: str = chat_message["message"]["content"]
+            sentence += current_text
+
+            if current_text.strip() in {".", "!", "?"}:
+                generate_queue.put(sentence)
+                sentence = ""
+
+        generate_queue.put(None)
+        generate_thread.join()
+        speak_queue.put(None)
+        speak_thread.join()
+
+    def _generate_worker(
+        self, generate_queue: queue.Queue[str], speak_queue: queue.Queue[str]
+    ) -> None:
+        while True:
+            item: str = generate_queue.get()
+            if item is None:
+                break
+
+            print(f"Generating audio for item: {item}")
+
+            with tempfile.NamedTemporaryFile(suffix=".mp3", delete=False) as audio_file:
+                audio_filename: str = audio_file.name
+                voice = ComputerVoiceResponder(
+                    text_to_speech_client=self._text_to_speech_client,
+                    audio_filename=audio_filename,
+                    output_device=self.output_device,
+                )
+                voice.generate(item)
+
+            speak_queue.put(audio_filename)
+            generate_queue.task_done()
+
+    def _speak_worker(self, speak_queue: queue.Queue[str]) -> None:
+        while True:
+            audio_filename: str = speak_queue.get()
+            if audio_filename is None:
+                break
+
+            print(f"Playing audio: {audio_filename}")
+
+            voice = ComputerVoiceResponder(
+                text_to_speech_client=self._text_to_speech_client,
+                audio_filename=audio_filename,
+                output_device=self.output_device,
+            )
+
+            with self.lock:
+                voice.speak()
+
+            speak_queue.task_done()
