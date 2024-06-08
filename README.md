@@ -2,7 +2,9 @@
 
 Library to reduce latency in voice generations from LLM chat completion streams.
 
-This lets you generate voices using completely local LLM models, such as Ollama and TTS clients, such as Apple Say and Google Text-to-Speech with the same speed as privately created assistants such as OpenAI.
+This lets you generate voices from streams of text from local LLMs, such as Ollama and local TTS clients, such as Apple Say along with external clients such as Google Text-to-Speech with the same speed as privately created assistants such as OpenAI.
+
+As each sentence end is detected, it will run TTS on it and play it out loud while the rest of the completion is being generated in the background.
 
 ## Installation and Setup
 
