@@ -4,7 +4,7 @@ from pathlib import Path
 
 import gtts
 
-from llm_voice.interfaces.text_to_speech_client import TextToSpeechClient
+from llm_voice.tts.base import TextToSpeechClient
 from llm_voice.utils.logger import logger
 
 

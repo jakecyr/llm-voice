@@ -1,6 +1,6 @@
 # LLM Voice
 
-Library to reduce latency in voice generations from LLM generation streams.
+Library to reduce latency in voice generations from LLM chat completion streams.
 
 ## Installation
 
@@ -15,4 +15,20 @@ pip install llm-voice
 ```bash
 pip install poetry
 poetry install
+```
+
+## Design
+
+```mermaid
+flowchart LR
+  OtherApplication-->LLM
+  OtherApplication-->VoiceResponder
+  VoiceResponder-->OutputDevice
+  subgraph LLMVoice
+    FastVoiceResponder-->VoiceResponder
+    NormalVoiceResponder-->VoiceResponder
+    VoiceResponder-->LLM
+    Ollama-->LLM
+    OpenAI-->LLM
+  end
 ```

@@ -1,7 +1,7 @@
 [tool.poetry]
 name = "llm-voice"
 version = "0.1.0"
-description = "Library to reduce latency in voice generations from LLM generation streams"
+description = "Library to reduce latency in voice generations from LLM chat completion streams"
 authors = ["Jake Cyr <cyrjake@gmail.com>"]
 readme = "README.md"
 
@@ -12,6 +12,13 @@ gtts = "^2.4.0"
 google-cloud-texttospeech = "^2.14.2"
 python-dotenv = "^1.0.0"
 pyaudio = "^0.2.14"
+openai = "^1.33.0"
+
+[tool.poetry.group.dev.dependencies]
+ruff = "^0.4.8"
+pytest = "^8.2.2"
+coverage = "^7.5.3"
+mypy = "^1.10.0"
 
 [build-system]
 requires = ["poetry-core"]

@@ -5,8 +5,9 @@ from pathlib import Path
 from typing import Literal
 
 from openai import OpenAI
+from openai._legacy_response import HttpxBinaryResponseContent
 
-from llm_voice.interfaces.text_to_speech_client import TextToSpeechClient
+from llm_voice.tts.base import TextToSpeechClient
 
 DEFAULT_MODEL = "tts-1"
 
@@ -68,7 +69,7 @@ class OpenAITextToSpeechClient(TextToSpeechClient):
 
         client = OpenAI(api_key=self._api_key)
 
-        response = client.audio.speech.create(
+        response: HttpxBinaryResponseContent = client.audio.speech.create(
             model=self._model,
             voice=self._voice,
             input=text_to_speak,

@@ -6,7 +6,7 @@ from pathlib import Path
 
 import requests
 
-from llm_voice.interfaces.text_to_speech_client import TextToSpeechClient
+from llm_voice.tts.base import TextToSpeechClient
 from llm_voice.utils.logger import logger
 
 # Matilda voice.
@@ -84,12 +84,11 @@ class ElevenLabsTextToSpeechClient(TextToSpeechClient):
             logger.info(f'Audio content written to file "{audio_file_path}"')
 
     def get_voices(self) -> dict:
-        response = requests.get(
+        response: requests.Response = requests.get(
             "https://api.elevenlabs.io/v1/voices",
             headers={"xi-api-key": self._api_key},
             timeout=5,
         )
 
         response_json: dict = json.loads(response.content)
-
         return response_json

@@ -5,19 +5,18 @@ import queue
 import tempfile
 import time
 import threading
-from typing import TYPE_CHECKING
+from typing import TYPE_CHECKING, Iterable
 
 from llm_voice.errors.respond_error import RespondError
-from llm_voice.interfaces.responder import Responder
-from llm_voice.mp3_file import Mp3File
+from llm_voice.utils.mp3_file import Mp3File
 from llm_voice.utils.logger import logger
 
 if TYPE_CHECKING:
     from llm_voice.interfaces.audio_device import AudioDevice
-    from llm_voice.interfaces.text_to_speech_client import TextToSpeechClient
+    from llm_voice.tts.base import TextToSpeechClient
 
 
-class ComputerVoiceResponder(Responder):
+class VoiceResponderFast:
     """Responder that responds to the user with the Computer Voice."""
 
     def __init__(
@@ -26,7 +25,7 @@ class ComputerVoiceResponder(Responder):
         output_device: AudioDevice,
         speech_rate: float = 1.0,
     ) -> None:
-        """Initialize the ComputerVoiceResponder.
+        """Initialize the VoiceResponderFast.
 
         Args:
             text_to_speech_client: The text to speech client.
@@ -45,7 +44,7 @@ class ComputerVoiceResponder(Responder):
             text_to_speak: The text to generate audio for.
         """
         try:
-            logger.debug(f"ComputerVoiceResponder.speak - '{text_to_speak}'")
+            logger.debug(f"VoiceResponderFast.speak - '{text_to_speak}'")
             self._text_to_speech_client.convert_text_to_audio(
                 text_to_speak,
                 Path(audio_filename),
@@ -53,7 +52,7 @@ class ComputerVoiceResponder(Responder):
         except Exception as e:
             raise RespondError(f"Error running computer voice response: {e}") from e
 
-    def speak_fast(self, chat_stream) -> None:
+    def respond(self, text_to_speak: Iterable[str]) -> None:
         lock = threading.Lock()
         sentence: str = ""
         generate_queue = queue.Queue[str]()
@@ -73,6 +72,9 @@ class ComputerVoiceResponder(Responder):
                     suffix=self._text_to_speech_client.audio_extension,
                     delete=False,
                 ) as audio_file:
+                    logger.debug(
+                        f"VoiceResponderFast: Generating audio file ({audio_file.name}) for: '{item}'"
+                    )
                     self.generate(audio_file.name, item)
 
                 audio_file_path = Path(audio_file.name)
@@ -98,6 +100,10 @@ class ComputerVoiceResponder(Responder):
                 try:
                     mp3_file = Mp3File(Path(audio_filename))
 
+                    logger.debug(
+                        f"Playing audio: {audio_filename} on output device: {self.output_device}"
+                    )
+
                     with lock:
                         mp3_file.play()
                 except Exception as e:
@@ -117,15 +123,15 @@ class ComputerVoiceResponder(Responder):
         generate_thread.start()
         speak_thread.start()
 
-        for chat_message in chat_stream:
-            current_text: str = chat_message["message"]["content"]
+        for chat_message in text_to_speak:
+            current_text: str = chat_message
             sentence += current_text
 
             if current_text.strip() in {".", "!", "?"}:
                 generate_queue.put(sentence)
                 sentence = ""
 
-        generate_queue.put(None)
+        generate_queue.put(None)  # type: ignore
         generate_thread.join()
-        speak_queue.put(None)
+        speak_queue.put(None)  # type: ignore
         speak_thread.join()

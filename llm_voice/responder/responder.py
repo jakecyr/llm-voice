@@ -7,7 +7,7 @@ class Responder(ABC):
     """Abstract class for way to respond to user input."""
 
     @abstractmethod
-    def generate(self, text_to_speak: str) -> None:
+    def respond(self, text_to_speak: str) -> None:
         """Respond to a request.
 
         Args:
