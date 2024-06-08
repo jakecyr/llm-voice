@@ -1,6 +1,6 @@
 [tool.poetry]
 name = "llm-voice"
-version = "0.1.0"
+version = "0.0.1"
 description = "Library to reduce latency in voice generations from LLM chat completion streams"
 authors = ["Jake Cyr <cyrjake@gmail.com>"]
 readme = "README.md"
