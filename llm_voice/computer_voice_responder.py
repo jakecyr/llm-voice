@@ -125,13 +125,7 @@ class ComputerVoiceResponder(Responder):
 
             print(f"Playing audio: {audio_filename}")
 
-            voice = ComputerVoiceResponder(
-                text_to_speech_client=self._text_to_speech_client,
-                audio_filename=audio_filename,
-                output_device=self.output_device,
-            )
-
             with self.lock:
-                voice.speak()
+                self.speak()
 
             speak_queue.task_done()

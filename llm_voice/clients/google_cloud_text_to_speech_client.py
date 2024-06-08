@@ -69,7 +69,7 @@ class GoogleCloudTextToSpeechClient(TextToSpeechClient):
 
         # Perform the text-to-speech request on the text input with the selected
         # voice parameters and audio file type
-        response = client.synthesize_speech(
+        response: texttospeech.SynthesizeSpeechResponse = client.synthesize_speech(
             input=synthesis_input,
             voice=voice,
             audio_config=audio_config,
