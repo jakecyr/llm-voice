@@ -6,7 +6,6 @@ from llm_voice.interfaces.audio_device import AudioDevice, AudioDeviceType
 import ollama
 import threading
 import queue
-import time
 import tempfile
 
 
@@ -24,15 +23,17 @@ def main() -> None:
         stream=True,
     )
 
-    def worker(q: queue.Queue[str]) -> None:
+    lock = threading.Lock()
+
+    def generate_worker(generate_queue: queue.Queue[str], speak_queue: queue.Queue[str]) -> None:
         while True:
-            item: str = q.get()
+            item: str = generate_queue.get()
             if item is None:
                 break
 
-            print(f"Processing item: {item}")
+            print(f"Generating audio for item: {item}")
 
-            with tempfile.NamedTemporaryFile(suffix=".mp3") as audio_file:
+            with tempfile.NamedTemporaryFile(suffix=".mp3", delete=False) as audio_file:
                 audio_filename: str = audio_file.name
                 voice = ComputerVoiceResponder(
                     text_to_speech_client=tts_client,
@@ -41,21 +42,48 @@ def main() -> None:
                 )
                 voice.generate(item)
 
-            time.sleep(1)
-            q.task_done()
+            speak_queue.put(audio_filename)
+            generate_queue.task_done()
+
+    def speak_worker(speak_queue: queue.Queue[str]) -> None:
+        while True:
+            audio_filename: str = speak_queue.get()
+            if audio_filename is None:
+                break
+
+            print(f"Playing audio: {audio_filename}")
+
+            voice = ComputerVoiceResponder(
+                text_to_speech_client=tts_client,
+                audio_filename=audio_filename,
+                output_device=output_device,
+            )
+
+            with lock:
+                voice.speak()
+
+            speak_queue.task_done()
 
     sentence: str = ""
-    q = queue.Queue[str]()
-    thread = threading.Thread(target=worker, args=(q,))
-    thread.start()
+    generate_queue = queue.Queue[str]()
+    speak_queue = queue.Queue[str]()
+    generate_thread = threading.Thread(target=generate_worker, args=(generate_queue, speak_queue))
+    speak_thread = threading.Thread(target=speak_worker, args=(speak_queue,))
+    generate_thread.start()
+    speak_thread.start()
 
     for chat_message in chat_stream:
         current_text: str = chat_message["message"]["content"]
         sentence += current_text
 
         if current_text.strip() in {".", "!", "?"}:
-            q.put(sentence)
+            generate_queue.put(sentence)
             sentence = ""
+
+    generate_queue.put(None)
+    generate_thread.join()
+    speak_queue.put(None)
+    speak_thread.join()
 
 
 if __name__ == "__main__":
