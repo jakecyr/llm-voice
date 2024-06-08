@@ -2,6 +2,8 @@
 
 Library to reduce latency in voice generations from LLM chat completion streams.
 
+This lets you generate voices using completely local LLM models, such as Ollama and TTS clients, such as Apple Say and Google Text-to-Speech with the same speed as privately created assistants such as OpenAI.
+
 ## Installation and Setup
 
 1. Install the package from PyPI with:
@@ -64,3 +66,7 @@ voice_responder_fast.respond(chat_stream)
 pip install poetry
 poetry install
 ```
+
+## License
+
+This project is licensed under the MIT License. See the [LICENSE](./LICENSE) file for details.
