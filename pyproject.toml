@@ -1,7 +1,7 @@
 [tool.poetry]
 name = "llm-voice"
 version = "0.1.0"
-description = ""
+description = "Library to reduce latency in voice generations from LLM generation streams"
 authors = ["Jake Cyr <cyrjake@gmail.com>"]
 readme = "README.md"
 
