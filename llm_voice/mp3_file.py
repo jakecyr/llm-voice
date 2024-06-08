@@ -23,7 +23,7 @@ class Mp3File:
         Args:
             audio_filename: The audio filename.
         """
-        self._audio_filename: Path = Path.cwd() / audio_filename
+        self._audio_filename: Path = audio_filename
 
     def play(self) -> None:
         """Speak the referenced text on the machine speakers."""
@@ -41,6 +41,8 @@ class Mp3File:
                     "1",
                     str(self._audio_filename),
                 ]
+
+                logger.debug(f"Running command: {cmd}")
                 subprocess.call(cmd)
             elif platform_name == "win32" or platform_name == "cygwin":
                 logger.debug("Trying to speak on Windows...")

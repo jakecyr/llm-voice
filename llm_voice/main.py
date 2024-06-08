@@ -19,13 +19,10 @@ def main() -> None:
         messages=[{"role": "user", "content": "Hello there, how are you today?"}],
         stream=True,
     )
-
     computer_voice_responder = ComputerVoiceResponder(
         text_to_speech_client=tts_client,
-        audio_filename="audio.mp3",
         output_device=output_device,
     )
-
     computer_voice_responder.speak_fast(chat_stream)
 
 
